@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Cache-correctness eval + false-positive gate (keyless)
+        # No secrets in CI: the eval reads committed embeddings from
+        # data/golden-embeddings.json and scores the cache-hit decision
+        # (precision / recall / false-positive rate). Fails the build if the
+        # shipped pipeline serves wrong cached answers above the FP budget.
+        run: npm run eval
