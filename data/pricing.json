@@ -1,0 +1,11 @@
+{
+  "note": "Indicative public list prices (USD per 1M tokens), a dated snapshot — update from each provider's pricing page. Used only to ESTIMATE request cost and cache savings; the gateway never bills.",
+  "asOf": "2026-06",
+  "models": {
+    "claude-haiku-4-5": { "inputPerM": 1.0, "outputPerM": 5.0 },
+    "claude-opus-4-8": { "inputPerM": 15.0, "outputPerM": 75.0 },
+    "gpt-4o-mini": { "inputPerM": 0.15, "outputPerM": 0.6 },
+    "text-embedding-3-small": { "inputPerM": 0.02, "outputPerM": 0.0 },
+    "mock": { "inputPerM": 0.0, "outputPerM": 0.0 }
+  }
+}
