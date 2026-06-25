@@ -1,0 +1,371 @@
+[
+  {
+    "id": "capital-france-exact",
+    "group": "capital-of-france",
+    "base": "What is the capital of France?",
+    "probe": "What is the capital of France?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat — Tier-1 exact must hit"
+  },
+  {
+    "id": "capital-france-para",
+    "group": "capital-of-france",
+    "base": "What is the capital of France?",
+    "probe": "Which city is the capital of France?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "synonymous phrasing, same answer"
+  },
+  {
+    "id": "boiling-water-para",
+    "group": "boiling-point-water",
+    "base": "What is the boiling point of water at sea level?",
+    "probe": "At sea level, what temperature does water boil?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "reordered paraphrase"
+  },
+  {
+    "id": "eiffel-height-para",
+    "group": "eiffel-height",
+    "base": "How tall is the Eiffel Tower?",
+    "probe": "What is the height of the Eiffel Tower?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "tall vs height — same intent"
+  },
+  {
+    "id": "photosynthesis-para",
+    "group": "photosynthesis",
+    "base": "What is photosynthesis?",
+    "probe": "Can you explain what photosynthesis is?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "politeness wrapper, same question"
+  },
+  {
+    "id": "great-wall-para",
+    "group": "great-wall-length",
+    "base": "How long is the Great Wall of China?",
+    "probe": "What is the length of the Great Wall of China?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "how long vs length"
+  },
+  {
+    "id": "python-gil-para",
+    "group": "python-gil",
+    "base": "What does the GIL do in Python?",
+    "probe": "What is the purpose of Python's global interpreter lock?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "acronym expansion — GIL = global interpreter lock"
+  },
+  {
+    "id": "http-404-para",
+    "group": "http-404",
+    "base": "What does HTTP status 404 mean?",
+    "probe": "What is the meaning of a 404 HTTP response?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "reordered, same intent"
+  },
+  {
+    "id": "speed-light-para",
+    "group": "speed-of-light",
+    "base": "What is the speed of light in a vacuum?",
+    "probe": "How fast does light travel in a vacuum?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "speed vs how fast"
+  },
+  {
+    "id": "mona-lisa-para",
+    "group": "mona-lisa-artist",
+    "base": "Who painted the Mona Lisa?",
+    "probe": "Which artist created the Mona Lisa?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "painted vs artist created"
+  },
+  {
+    "id": "git-rebase-para",
+    "group": "git-rebase",
+    "base": "What does git rebase do?",
+    "probe": "Explain what the git rebase command does.",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "imperative vs interrogative, same intent"
+  },
+  {
+    "id": "sleep-drugfree-para",
+    "group": "sleep-without-meds",
+    "base": "How can I fall asleep without taking medication?",
+    "probe": "What are drug-free ways to fall asleep?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": "HARD paraphrase: 'without' is a negation cue but the intent matches — the deterministic guard may over-reject this; the LLM judge should keep it"
+  },
+  {
+    "id": "coffee-health-neg",
+    "group": "coffee-and-health",
+    "base": "Is coffee good for your health?",
+    "probe": "Is coffee bad for your health?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "good vs bad — antonym flip"
+  },
+  {
+    "id": "med-pregnancy-neg",
+    "group": "medication-pregnancy",
+    "base": "Is this medication safe to take during pregnancy?",
+    "probe": "Is this medication unsafe to take during pregnancy?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "safe vs unsafe"
+  },
+  {
+    "id": "vpn-legal-neg",
+    "group": "vpn-legality",
+    "base": "Is using a VPN legal in the United States?",
+    "probe": "Is using a VPN illegal in the United States?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "legal vs illegal"
+  },
+  {
+    "id": "eggs-cholesterol-neg",
+    "group": "eggs-cholesterol",
+    "base": "Do eggs raise your cholesterol?",
+    "probe": "Do eggs lower your cholesterol?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "raise vs lower"
+  },
+  {
+    "id": "remote-productive-neg",
+    "group": "remote-productivity",
+    "base": "Does remote work increase productivity?",
+    "probe": "Does remote work decrease productivity?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "increase vs decrease"
+  },
+  {
+    "id": "statement-truth-neg",
+    "group": "statement-truth",
+    "base": "Is the following statement true?",
+    "probe": "Is the following statement false?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "true vs false"
+  },
+  {
+    "id": "service-up-neg",
+    "group": "payment-service-status",
+    "base": "Is the payment service currently up?",
+    "probe": "Is the payment service currently down?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "up vs down"
+  },
+  {
+    "id": "refund-allowed-neg",
+    "group": "refund-policy",
+    "base": "Are refunds allowed after 30 days?",
+    "probe": "Are refunds prohibited after 30 days?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "allowed vs prohibited"
+  },
+  {
+    "id": "vaccine-effective-neg",
+    "group": "vaccine-efficacy",
+    "base": "Is the vaccine effective against the flu?",
+    "probe": "Is the vaccine ineffective against the flu?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "effective vs ineffective"
+  },
+  {
+    "id": "plan-includes-neg",
+    "group": "plan-analytics",
+    "base": "Does the basic plan include analytics?",
+    "probe": "Does the basic plan exclude analytics?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "include vs exclude"
+  },
+  {
+    "id": "water-plant-neg",
+    "group": "water-plant",
+    "base": "Should I water this plant every day?",
+    "probe": "Should I not water this plant every day?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "explicit 'not' negation"
+  },
+  {
+    "id": "beginners-python-subtle",
+    "group": "beginners-python",
+    "base": "Should beginners learn Python first?",
+    "probe": "Should beginners avoid learning Python first?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": "SUBTLE: 'avoid' inverts intent without a lexical antonym — likely a deterministic-guard miss, an LLM-judge catch"
+  },
+  {
+    "id": "invest-now-subtle",
+    "group": "invest-timing",
+    "base": "Is it a good idea to invest in stocks right now?",
+    "probe": "Is it a good idea to wait before investing in stocks?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "SUBTLE: opposite advice with no antonym/negation token — needs the LLM judge"
+  },
+  {
+    "id": "weather-paris-time",
+    "group": "weather-paris",
+    "base": "What's the weather in Paris today?",
+    "probe": "What's the weather in Paris tomorrow?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "scope-flip in time — today vs tomorrow"
+  },
+  {
+    "id": "temp-convert-flip",
+    "group": "temperature-convert",
+    "base": "What is 100 degrees Celsius in Fahrenheit?",
+    "probe": "What is 100 degrees Fahrenheit in Celsius?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "unit scope-flip — opposite conversion"
+  },
+  {
+    "id": "ibuprofen-pop-flip",
+    "group": "ibuprofen-dose",
+    "base": "What is the recommended ibuprofen dose for adults?",
+    "probe": "What is the recommended ibuprofen dose for children?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "population scope-flip — adults vs children"
+  },
+  {
+    "id": "capital-austr-flip",
+    "group": "capital-austr",
+    "base": "What is the capital of Australia?",
+    "probe": "What is the capital of Austria?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "near-identical strings, different country and answer"
+  },
+  {
+    "id": "account-task-flip",
+    "group": "account-help",
+    "base": "How do I reset my password?",
+    "probe": "How do I change my username?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "same topic (account), different task"
+  },
+  {
+    "id": "moon-units-flip",
+    "group": "moon-distance",
+    "base": "How far is the moon in kilometers?",
+    "probe": "How far is the moon in miles?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "unit scope-flip — km vs miles, different number"
+  },
+  {
+    "id": "tax-year-flip",
+    "group": "tax-deadline",
+    "base": "What is the income tax filing deadline for 2023?",
+    "probe": "What is the income tax filing deadline for 2024?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "year scope-flip"
+  },
+  {
+    "id": "ceo-entity-flip",
+    "group": "tech-ceo",
+    "base": "Who is the CEO of Google?",
+    "probe": "Who is the CEO of Microsoft?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "entity flip — different company"
+  },
+  {
+    "id": "team-size-flip",
+    "group": "team-size",
+    "base": "How many players are on a soccer team?",
+    "probe": "How many players are on a basketball team?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "entity flip — different sport"
+  },
+  {
+    "id": "js-compiled-diff",
+    "group": "js-execution",
+    "base": "Is JavaScript a compiled language?",
+    "probe": "Is JavaScript an interpreted language?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "compiled vs interpreted — contrasting, different answer"
+  },
+  {
+    "id": "everest-exact",
+    "group": "everest-height",
+    "base": "How tall is Mount Everest?",
+    "probe": "How tall is Mount Everest?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat"
+  },
+  {
+    "id": "capital-japan-exact",
+    "group": "capital-japan",
+    "base": "What is the capital of Japan?",
+    "probe": "What is the capital of Japan?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat"
+  },
+  {
+    "id": "water-formula-exact",
+    "group": "water-formula",
+    "base": "What is the chemical formula for water?",
+    "probe": "What is the chemical formula for water?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat"
+  },
+  {
+    "id": "days-week-exact",
+    "group": "days-week",
+    "base": "How many days are in a week?",
+    "probe": "How many days are in a week?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat"
+  },
+  {
+    "id": "tcp-udp-exact",
+    "group": "tcp-vs-udp",
+    "base": "What is the difference between TCP and UDP?",
+    "probe": "What is the difference between TCP and UDP?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": "verbatim repeat"
+  },
+  {
+    "id": "currency-convert-flip",
+    "group": "currency-convert",
+    "base": "How many US dollars is 100 euros?",
+    "probe": "How many euros is 100 US dollars?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": "direction flip — opposite conversion"
+  }
+]
