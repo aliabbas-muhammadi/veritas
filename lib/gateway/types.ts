@@ -44,7 +44,28 @@ export type CacheHit = {
   guardScore?: number;
 };
 
-export type CacheMiss = { tier: "miss" };
+/**
+ * Why a semantic candidate that cleared τ was withheld — which guard tier blocked
+ * it, the cosine similarity it nonetheless scored, and the cached question whose
+ * answer was refused. This is the project's thesis made visible: a high-similarity
+ * hit that a fixed threshold would have served, correctly turned into a miss.
+ */
+export type GuardVerdict = {
+  by: "deterministic" | "judge";
+  similarity: number;
+  candidate: string;
+};
+
+export type CacheMiss = {
+  tier: "miss";
+  /**
+   * Set when a semantic candidate *cleared* τ but the intent guard rejected it —
+   * the negation-blocked case ("is X safe?" found "is X unsafe?" at high cosine
+   * and refused it). Surfaced so the UI and observability can show the catch,
+   * instead of it looking identical to a cold miss.
+   */
+  rejected?: { candidate: CacheEntry; similarity: number };
+};
 export type CacheResult = CacheHit | CacheMiss;
 
 export function isHit(r: CacheResult): r is CacheHit {
@@ -85,6 +106,9 @@ export type ObserveEvent = {
   "veritas.latency.total_ms": number;
   "veritas.cost.dollars": number;
   "veritas.resilience.rescued"?: boolean;
+  /** True when this miss exists *because* the intent guard refused a candidate
+   * that cleared τ — a wrong cached answer the cache declined to serve. */
+  "veritas.guard.blocked"?: boolean;
 };
 
 /**
@@ -99,6 +123,11 @@ export type WireEvent =
       similarity?: number;
       model: string;
       provider: ProviderName;
+      /** Present on a miss that the intent guard caused — the blocked candidate. */
+      guard?: GuardVerdict;
+      /** True when a provider failed before its first token and a fallback served
+       * instead (pre-first-token failover) — the honest, only-safe rescue. */
+      rescued?: boolean;
     }
   | { type: "first_token"; at: number }
   | { type: "text"; text: string }

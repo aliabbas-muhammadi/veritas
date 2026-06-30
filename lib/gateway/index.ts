@@ -22,7 +22,7 @@ import { establishStream } from "./resilience";
 import { deterministicReject, llmJudgeGuard, judgeAvailable } from "./rerank";
 import { costUsd } from "./pricing";
 import { record } from "./observe";
-import type { GatewayRequest, ProviderEvent, Usage, WireEvent } from "./types";
+import type { GatewayRequest, GuardVerdict, ProviderEvent, Usage, WireEvent } from "./types";
 
 const DEFAULT_THRESHOLD = Number(process.env.CACHE_THRESHOLD ?? "0.92");
 
@@ -45,6 +45,11 @@ export async function* runGateway(
   const threshold = req.cache?.threshold ?? DEFAULT_THRESHOLD;
   const judgeOn = process.env.GUARD_JUDGE === "on" && judgeAvailable();
 
+  // When the guard turns a high-similarity candidate into a miss, we remember
+  // which tier blocked it and the cosine it scored — the project's thesis made
+  // visible (a hit a fixed threshold would have served, correctly refused).
+  let guardVerdict: GuardVerdict | null = null;
+
   // Tier-1 exact first — it needs no embedding, so an exact hit never pays for an
   // OpenAI embedding call. Only embed when the exact tier misses and Tier-2 is on.
   let result = lookup(key, { embedding: null, threshold, semantic: false });
@@ -58,6 +63,14 @@ export async function* runGateway(
       // Tier-A guard (synchronous, keyless): reject confident polarity/scope flips.
       guard: (probeQuery, candidate) => !deterministicReject(probeQuery, candidate.query),
     });
+    // Tier-A blocked the top candidate ⇒ record the deterministic catch.
+    if (!isHit(result) && result.rejected) {
+      guardVerdict = {
+        by: "deterministic",
+        similarity: result.rejected.similarity,
+        candidate: result.rejected.candidate.query,
+      };
+    }
   }
 
   // Tier-B guard: an async LLM judge confirms a *semantic* hit's intent. Off
@@ -65,7 +78,10 @@ export async function* runGateway(
   let hit = isHit(result) ? result : null;
   if (hit && hit.tier === "semantic" && judgeOn) {
     const keep = await llmJudgeGuard(key.query, hit.entry.query);
-    if (!keep) hit = null; // judge rejected → treat as a miss
+    if (!keep) {
+      guardVerdict = { by: "judge", similarity: hit.similarity, candidate: hit.entry.query };
+      hit = null; // judge rejected → treat as a miss
+    }
   }
 
   // ── Cache HIT: replay the stored exchange, no provider spend ───────────────
@@ -114,7 +130,14 @@ export async function* runGateway(
     return;
   }
   const { provider, model, gen, first, rescued } = committed;
-  yield { type: "meta", cache: "miss", model, provider: provider.name };
+  yield {
+    type: "meta",
+    cache: "miss",
+    model,
+    provider: provider.name,
+    ...(guardVerdict ? { guard: guardVerdict } : {}),
+    ...(rescued ? { rescued: true } : {}),
+  };
 
   const collected: ProviderEvent[] = [];
   let usage: Usage | undefined;
@@ -181,6 +204,7 @@ export async function* runGateway(
     "veritas.latency.total_ms": totalMs,
     "veritas.cost.dollars": spentUsd,
     "veritas.resilience.rescued": rescued,
+    "veritas.guard.blocked": guardVerdict ? true : undefined,
   });
 }
 

@@ -33,6 +33,7 @@ export type Snapshot = {
   latency: { ttftP50: number; ttftP95: number; totalP50: number; totalP95: number };
   cost: { spentUsd: number; savedUsd: number };
   resilience: { rescued: number; rescuedRate: number };
+  guard: { blocked: number };
 };
 
 export function snapshot(): Snapshot {
@@ -41,6 +42,7 @@ export function snapshot(): Snapshot {
   let spent = 0;
   let saved = 0;
   let rescued = 0;
+  let guardBlocked = 0;
   const ttfts: number[] = [];
   const totals: number[] = [];
 
@@ -52,6 +54,7 @@ export function snapshot(): Snapshot {
     spent += e["veritas.cost.dollars"] ?? 0;
     saved += e["veritas.cache.dollars_saved"] ?? 0;
     if (e["veritas.resilience.rescued"]) rescued++;
+    if (e["veritas.guard.blocked"]) guardBlocked++;
     const ttft = e["veritas.latency.ttft_ms"];
     if (typeof ttft === "number") ttfts.push(ttft);
     totals.push(e["veritas.latency.total_ms"]);
@@ -72,6 +75,7 @@ export function snapshot(): Snapshot {
     },
     cost: { spentUsd: round4(spent), savedUsd: round4(saved) },
     resilience: { rescued, rescuedRate: n ? round4(rescued / n) : 0 },
+    guard: { blocked: guardBlocked },
   };
 }
 

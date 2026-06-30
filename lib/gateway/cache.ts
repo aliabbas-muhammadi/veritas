@@ -67,8 +67,9 @@ export function lookup(key: CacheKey, opts: LookupOptions): CacheResult {
     }
     if (best) {
       // The guard is the difference between a hit rate and a *correct* hit rate.
+      // Report the rejected candidate so the caller can surface the catch.
       if (opts.guard && !opts.guard(key.query, best.entry, best.sim)) {
-        return { tier: "miss" };
+        return { tier: "miss", rejected: { candidate: best.entry, similarity: best.sim } };
       }
       // LRU-touch the matched ANCHOR under its OWN hash (not the probe's), so a
       // recently-reused semantic entry isn't evicted before colder ones.

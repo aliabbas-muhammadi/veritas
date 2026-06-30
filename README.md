@@ -7,7 +7,7 @@ rate" can quietly include answers that are wrong. (GPTCache, for instance,
 publishes hit-ratio and recall but no precision; it's structurally blind to the
 worst failure.) Veritas scores the metric they omit and **gates CI on it**.
 
-> **Status: P1–P5 — cache, guard, observability, failover, and a deepened eval, all measured.** The repo runs green keyless (the
+> **Status: P1–P6 — cache, guard, observability, failover, a deepened eval, and a live playground, all measured.** The repo runs green keyless (the
 > eval prints the precision/false-positive table + threshold sweep + learned-threshold experiment and gates CI).
 > The live pipeline is verified end-to-end: a paraphrase is served from cache, a
 > near-identical *negation* is correctly blocked, and a forced outage fails over
@@ -133,7 +133,13 @@ _Measured on the 75-pair adversarial set (`eval/golden.json`), real OpenAI embed
   **learned-threshold experiment** (`boundary.ts`, leave-one-out logistic) — no
   judge-free rule beats recall 0.32 vs the judge's 0.97, a **3.0×** gap — and a
   reproducible **cost/latency benchmark** (`npm run bench`).
-- **P6:** the interactive playground; deploy to `gateway.alimuhammadi.com`.
+- **P6 (done):** the interactive playground (`/playground`) — a guided tour over
+  the *real* gateway: a paraphrase reused at $0, a polarity flip blocked by the
+  keyless guard, a reframing blocked by the LLM judge (each showing the candidate
+  it refused and the cosine it scored), and a forced outage rescued by
+  pre-first-token failover — with the live `/api/metrics` strip (hit rate, guard
+  blocks, $ saved, TTFT percentiles). A `/api/capabilities` probe shows whether
+  semantic + judge are wired, so a misconfigured deploy is obvious, not silent.
 
 ## Run
 
@@ -147,7 +153,9 @@ npm run eval             # precision/FP table + threshold sweep + learned-thresh
                          # experiment, gates CI keyless
 npm run bench            # live cost/latency benchmark (needs keys): hit-rate,
                          # TTFT/total percentiles, $ spent vs saved
-npm run dev              # POST /api/chat — streams NDJSON (mock provider if no keys)
+npm run dev              # POST /api/chat — streams NDJSON (mock provider if no keys);
+                         # visit /playground for the guided live tour (set
+                         # SEMANTIC_CACHE=on GUARD_JUDGE=on for the cache + guard)
 ```
 
 With no API keys the gateway serves a deterministic mock answer and the eval runs

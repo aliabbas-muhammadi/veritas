@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center px-5 py-16">
@@ -27,9 +29,12 @@ export default function Home() {
         <li>· Provider-agnostic over Anthropic + OpenAI, with a deterministic offline path</li>
       </ul>
       <div className="mt-8 flex items-center gap-3">
-        <span className="rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-          Interactive playground — coming soon
-        </span>
+        <Link
+          href="/playground"
+          className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        >
+          Open the live playground →
+        </Link>
       </div>
       <p className="mt-6 text-xs text-zinc-400">
         Runs fully offline with no API key (deterministic mock provider + committed
