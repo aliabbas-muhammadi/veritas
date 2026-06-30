@@ -367,5 +367,311 @@
     "pairType": "different-answer-must-not-hit",
     "equivalent": false,
     "note": "direction flip — opposite conversion"
+  },
+  {
+    "id": "https-abbr",
+    "group": "https",
+    "base": "What does HTTPS stand for?",
+    "probe": "What is HTTPS an abbreviation for?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "marathon-km",
+    "group": "marathon-distance",
+    "base": "How many kilometers is a marathon?",
+    "probe": "What is a marathon distance in kilometers?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "tesla-ceo",
+    "group": "tesla-ceo",
+    "base": "Who is the CEO of Tesla?",
+    "probe": "Who runs Tesla as its chief executive?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "git-clone",
+    "group": "git-clone",
+    "base": "What does git clone do?",
+    "probe": "What is the purpose of the git clone command?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "freeze-c",
+    "group": "water-freeze",
+    "base": "At what temperature does water freeze in Celsius?",
+    "probe": "In Celsius, what is the freezing point of water?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "capital-japan-2",
+    "group": "capital-japan-para",
+    "base": "What is the capital city of Japan?",
+    "probe": "Which city serves as the capital of Japan?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "python-lang",
+    "group": "python-is-language",
+    "base": "Is Python a programming language?",
+    "probe": "Is Python considered a programming language?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "tallest-mtn",
+    "group": "tallest-mountain",
+    "base": "What is the tallest mountain in the world?",
+    "probe": "Which mountain is the highest on Earth?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "sql-join",
+    "group": "sql-inner-join",
+    "base": "What is a SQL inner join?",
+    "probe": "In SQL, what does an inner join do?",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "photo-def",
+    "group": "photosynthesis-def",
+    "base": "What is photosynthesis?",
+    "probe": "Define photosynthesis.",
+    "pairType": "paraphrase-should-hit",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "plastic-recycle",
+    "group": "plastic-recyclable",
+    "base": "Is plastic recyclable?",
+    "probe": "Is plastic non-recyclable?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "bread-gluten",
+    "group": "bread-gluten",
+    "base": "Is this bread gluten-free?",
+    "probe": "Does this bread contain gluten?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "flight-direct",
+    "group": "sydney-tokyo-direct",
+    "base": "Is there a direct flight from Sydney to Tokyo?",
+    "probe": "Is there no direct flight from Sydney to Tokyo?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "login-pw",
+    "group": "login-password-required",
+    "base": "Is a password required to log in?",
+    "probe": "Is a password not required to log in?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "expenses-tax",
+    "group": "expenses-deductible",
+    "base": "Are these expenses tax-deductible?",
+    "probe": "Are these expenses non-deductible?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "mushroom-edible",
+    "group": "mushroom-edible",
+    "base": "Is this mushroom edible?",
+    "probe": "Is this mushroom poisonous?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "stock-rising",
+    "group": "stock-direction",
+    "base": "Is the stock price rising?",
+    "probe": "Is the stock price falling?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "warranty-water",
+    "group": "warranty-water-damage",
+    "base": "Is water damage covered by the warranty?",
+    "probe": "Is water damage excluded from the warranty?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "lib-oss",
+    "group": "library-open-source",
+    "base": "Is this library open source?",
+    "probe": "Is this library proprietary?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "dish-vegan",
+    "group": "dish-vegan",
+    "base": "Is this dish vegan?",
+    "probe": "Does this dish contain animal products?",
+    "pairType": "negation-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "korea-capital",
+    "group": "korea-capital",
+    "base": "What is the capital of North Korea?",
+    "probe": "What is the capital of South Korea?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "py-print-ver",
+    "group": "python-print-version",
+    "base": "How do I print in Python 2?",
+    "probe": "How do I print in Python 3?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "c-k-convert",
+    "group": "celsius-kelvin-convert",
+    "base": "What is 0 degrees Celsius in Kelvin?",
+    "probe": "What is 0 Kelvin in Celsius?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "pet-years",
+    "group": "pet-human-years",
+    "base": "How do I calculate a dog age in human years?",
+    "probe": "How do I calculate a cat age in human years?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "city-time",
+    "group": "city-time",
+    "base": "What time is it in London?",
+    "probe": "What time is it in Los Angeles?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "rect-measure",
+    "group": "rectangle-measure",
+    "base": "How do I find the area of a rectangle?",
+    "probe": "How do I find the perimeter of a rectangle?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "mortgage-term",
+    "group": "mortgage-term",
+    "base": "What is the monthly payment on a 15-year mortgage?",
+    "probe": "What is the monthly payment on a 30-year mortgage?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "screenshot-os",
+    "group": "screenshot-platform",
+    "base": "How do I take a screenshot on an iPhone?",
+    "probe": "How do I take a screenshot on Android?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "egg-cook",
+    "group": "egg-cook-method",
+    "base": "How long should I boil an egg?",
+    "probe": "How long should I fry an egg?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "account-money",
+    "group": "account-deposit-withdraw",
+    "base": "How do I deposit money into my account?",
+    "probe": "How do I withdraw money from my account?",
+    "pairType": "different-answer-must-not-hit",
+    "equivalent": false,
+    "note": ""
+  },
+  {
+    "id": "speed-sound-x",
+    "group": "speed-of-sound",
+    "base": "What is the speed of sound?",
+    "probe": "What is the speed of sound?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "largest-ocean-x",
+    "group": "largest-ocean",
+    "base": "What is the largest ocean on Earth?",
+    "probe": "What is the largest ocean on Earth?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "leap-year-x",
+    "group": "leap-year-days",
+    "base": "How many days are in a leap year?",
+    "probe": "How many days are in a leap year?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": ""
+  },
+  {
+    "id": "http-get-x",
+    "group": "http-get",
+    "base": "What does an HTTP GET request do?",
+    "probe": "What does an HTTP GET request do?",
+    "pairType": "exact-repeat",
+    "equivalent": true,
+    "note": ""
   }
 ]

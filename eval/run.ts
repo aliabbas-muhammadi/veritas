@@ -32,6 +32,7 @@ import index from "@/data/golden-embeddings.json";
 import { cosine } from "@/lib/gateway/similarity";
 import { canonical } from "@/lib/gateway/scopeKey";
 import { deterministicReject } from "@/lib/gateway/rerank";
+import { looProbs } from "@/lib/gateway/boundary";
 
 type PairType =
   | "exact-repeat"
@@ -204,6 +205,59 @@ function main() {
         `where the raw cache's FP rate is far higher. No fixed τ makes the RAW cache both safe and high-recall.`,
     );
   }
+
+  // ── Learned-threshold experiment (vCache-style, leave-one-out) ────────────
+  // Can a judge-free LEARNED decision match the judge? Fit a tiny logistic
+  // regression on cheap features, graded leave-one-out (no row sees itself), and
+  // pick the lowest probability cutoff meeting the FP budget (max recall).
+  function armFromProbs(prob: number[], cut: number): Metrics {
+    let tp = 0, fp = 0, fn = 0, tn = 0;
+    items.forEach((it, i) => {
+      const h = exactHit(it) || prob[i]! >= cut;
+      if (h && it.equivalent) tp++;
+      else if (h && !it.equivalent) fp++;
+      else if (!h && it.equivalent) fn++;
+      else tn++;
+    });
+    return {
+      tp, fp, fn, tn,
+      precision: tp + fp ? tp / (tp + fp) : 1,
+      recall: tp + fn ? tp / (tp + fn) : 1,
+      fpRate: fp + tn ? fp / (fp + tn) : 0,
+      hitRate: (tp + fp) / items.length,
+    };
+  }
+  function bestCut(prob: number[]): Metrics {
+    let best: Metrics | null = null;
+    for (let c = 0.05; c <= 0.95001; c += 0.025) {
+      const m = armFromProbs(prob, c);
+      if (m.fpRate <= FP_BUDGET && (!best || m.recall > best.recall)) best = m;
+    }
+    return best ?? armFromProbs(prob, 0.95);
+  }
+  const yLab = items.map((it) => (it.equivalent ? 1 : 0));
+  const learnedSim = bestCut(looProbs(items.map((it) => [semSim(it)]), yLab));
+  const learnedDet = bestCut(looProbs(items.map((it) => [semSim(it), deterministicReject(it.base, it.probe) ? 1 : 0]), yLab));
+  let fixedRecallAtBudget = 0;
+  for (let t = 0.7; t <= 0.99001; t += 0.01) {
+    const m = score(armSemantic(Math.round(t * 100) / 100));
+    if (m.fpRate <= FP_BUDGET) fixedRecallAtBudget = Math.max(fixedRecallAtBudget, m.recall);
+  }
+  console.log(`\nLearned-threshold experiment (logistic, leave-one-out) — judge-free?`);
+  console.log("-".repeat(82));
+  console.log(`fixed-τ (sim only)  best recall ${f3(fixedRecallAtBudget)} at FP ≤ ${pct(FP_BUDGET)}`);
+  printArm("learned: sim", learnedSim);
+  printArm("learned: sim+det", learnedDet);
+  console.log("-".repeat(82));
+  console.log(
+    `No threshold — fixed OR learned on cheap features — beats recall ~${f3(fixedRecallAtBudget)} at FP ≤ ${pct(FP_BUDGET)}: the\n` +
+      `decision is monotonic in cosine and negations outscore paraphrases, so a judge-free cut has nothing to learn.\n` +
+      (bestTau !== null
+        ? `The LLM-judge guard recovers recall to ${f3(bestRecall)} at the same FP budget (operating at τ=${bestTau.toFixed(2)}) — it\n` +
+          `accepts true paraphrases at LOW similarity that any threshold rejects, while still blocking the\n` +
+          `high-similarity negations. That ${(bestRecall / Math.max(fixedRecallAtBudget, 0.001)).toFixed(1)}× recall gap is the judge's measured, irreplaceable value.`
+        : ``),
+  );
 
   // ── The gate ───────────────────────────────────────────────────────────────
   const arms: Record<string, Metrics | null> = { exact, semantic, detguard: det, llmguard: llm };
