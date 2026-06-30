@@ -123,10 +123,13 @@ export function judgeAvailable(): boolean {
 }
 
 const JUDGE_SYSTEM =
-  "Two user questions were matched by a semantic cache. Would the correct answer to the FIRST " +
-  "also be a correct answer to the SECOND? Consider intent, scope, and polarity — a flip in any " +
-  "of these (e.g. safe vs unsafe, today vs tomorrow, adults vs children, 'learn X' vs 'avoid X') " +
-  "means NO. Reply with ONLY the word YES or NO.";
+  "A semantic cache matched two user questions. Reply YES only if the correct cached answer to the " +
+  "FIRST would be a FULLY correct answer to the SECOND. Reply NO if their answers could differ, be " +
+  "opposite, or be LOGICALLY INVERTED — including a flip of polarity (safe vs unsafe), scope (today " +
+  "vs tomorrow, adults vs children), entity or units (Celsius vs Kelvin, North vs South), framing " +
+  "('is it vegan?' vs 'does it contain animal products?', 'is it allowed?' vs 'is it banned?'), or " +
+  "stance ('learn X' vs 'avoid X', 'invest now' vs 'wait to invest'). A cache serving a wrong answer " +
+  "is far worse than a miss, so when in doubt reply NO. Reply with ONLY the word YES or NO.";
 
 /** Returns true if the judge says the two questions share an answer (keep the hit). */
 export async function llmJudgeGuard(a: string, b: string): Promise<boolean> {

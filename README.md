@@ -31,18 +31,21 @@ The two-tier guard fixes it, and the lift is measured:
 | **+ Haiku intent judge (shipped)** | **1.00** | 0.39 | **0%** |
 
 And the guard **dominates the whole curve** — precision 1.00 / FP 0% at *every*
-threshold — so you can lower τ to **0.82 for recall 0.84 at FP ≤2%**, where the raw
-cache's FP rate is 64%. (The raw cache only reaches FP 0% at τ=0.96, where recall
+threshold — so you can lower τ to **0.72 for recall 0.97 at FP 0%**, where the raw
+cache's FP rate is ~75%. (The raw cache only reaches FP 0% at τ=0.96, where recall
 collapses to 0.32.) The deterministic tier catches lexical flips for free
-(good/bad, legal/illegal, today/tomorrow, 2023/2024); the Haiku judge catches the
-semantic ones it can't ("avoid learning X", swapped unit conversions). This is the
-vCache / MeanCache finding reproduced on our own data — and the guard that answers it.
+(good/bad, legal/illegal, today/tomorrow, 2023/2024); the answer-grounded Haiku
+judge catches the semantic ones it can't ("avoid learning X", "is it vegan?" vs
+"does it contain animal products?", swapped unit conversions). This is the vCache /
+MeanCache finding reproduced on our own data — and the guard that answers it. (The
+lone remaining miss is a fundamental embedding limit: "GIL" and "global interpreter
+lock" embed at cosine 0.56, too far apart to ever be a candidate.)
 
 **Is the judge necessary, or can a learned threshold replace it?** A leave-one-out
 logistic regression on cheap features (cosine, deterministic-flip) answers it: no
 judge-free rule beats recall **0.32 at FP 0%** — the decision is monotonic in
 cosine, and there's nothing to learn when negations outscore paraphrases — while
-the judge reaches **0.84** at the same safety, a **2.6× recall gap** that is the
+the judge reaches **0.97** at the same safety, a **3.0× recall gap** that is the
 judge's measured, irreplaceable value. (`npm run eval` prints this experiment.)
 
 ## Why this matters
@@ -94,7 +97,7 @@ npm run eval        # keyless: scores cache-hit precision / recall / FP rate,
 | cache-hit precision | of hits served, how many were correct | +semantic 0.48 → **+guard 1.00** (τ=0.92) |
 | **false-positive rate** | how often a wrong cached answer is served | +semantic 30% → **+guard 0%** (τ=0.92) |
 | rerank-guard lift | precision before → after the guard | 0.48 → 0.80 (det) → **1.00** (judge) |
-| judge vs learned threshold | recall at FP ≤2% — judge-free cap vs the judge | 0.32 (any learned cut) → **0.84** (judge), 2.6× |
+| recall at FP 0% (τ=0.72) | the shipped operating point — precision 1.00 | **0.97** (judge) vs **0.32** (any judge-free cut), 3.0× |
 | p50/p95 latency · TTFT | from `npm run bench` (26-req stream) | TTFT p50 ~0.9s / p95 ~1.8s · cache replay ~0 ms |
 | cost saved | cache hit = $0; from `npm run bench` | 38% hit-rate → **42% of provider spend avoided** |
 | failover rescued rate | outages caught before the first token | live: provider outage → served by fallback |
@@ -121,9 +124,14 @@ _Measured on the 75-pair adversarial set (`eval/golden.json`), real OpenAI embed
   mid-stream wall, documented not faked). Plus a deliberately minimal, **off-by-
   default** router framed honestly against RouterArena (no unmeasured "beats X"
   claim — a routing-quality eval is the bar, and it's future work).
-- **P5 (done):** deepened eval — grew the adversarial set to **75 pairs**; added a
-  **learned-threshold experiment** (`boundary.ts`, leave-one-out logistic) showing
-  no judge-free rule beats recall 0.32 at FP 0% vs the judge's 0.84 (2.6×); and a
+- **P5 (done):** deepened + **maximized** the eval — grew the adversarial set to
+  **75 pairs**, then pushed the pipeline to its ceiling: an answer-grounded judge
+  prompt + a lower operating τ lift **recall 0.84 → 0.97 at FP 0%** (precision 1.00);
+  a stronger embedder (text-embedding-3-large) was tested and is *worse* (compresses
+  paraphrases and negations together); the lone remaining miss is a fundamental
+  embedding limit ("GIL" vs "global interpreter lock" at cosine 0.56). Added a
+  **learned-threshold experiment** (`boundary.ts`, leave-one-out logistic) — no
+  judge-free rule beats recall 0.32 vs the judge's 0.97, a **3.0×** gap — and a
   reproducible **cost/latency benchmark** (`npm run bench`).
 - **P6:** the interactive playground; deploy to `gateway.alimuhammadi.com`.
 

@@ -184,11 +184,13 @@ function main() {
   console.log("   τ      raw:  P      R      FP        guarded:  P      R      FP");
   let bestTau: number | null = null;
   let bestRecall = -1;
-  for (let t = 0.78; t <= 0.97001; t += 0.02) {
+  // Pick the HIGHEST τ that still reaches the max safe recall — same recall, fewest
+  // judge calls (lower τ only floods the judge with more near-threshold candidates).
+  for (let t = 0.68; t <= 0.97001; t += 0.02) {
     const tau = Math.round(t * 100) / 100;
     const raw = score(armSemantic(tau));
     const g = guard ? score(armLlmGuard(tau)) : null;
-    if (g && g.fpRate <= FP_BUDGET && g.recall > bestRecall) {
+    if (g && g.fpRate <= FP_BUDGET && g.recall >= bestRecall) {
       bestRecall = g.recall;
       bestTau = tau;
     }

@@ -18,7 +18,7 @@ import type { GatewayRequest } from "@/lib/gateway/types";
 // The guarded semantic cache, at the recommended operating point from the eval.
 process.env.SEMANTIC_CACHE = "on";
 process.env.GUARD_JUDGE = "on";
-process.env.CACHE_THRESHOLD = process.env.CACHE_THRESHOLD || "0.82";
+process.env.CACHE_THRESHOLD = process.env.CACHE_THRESHOLD || "0.72";
 
 const MODEL = process.env.GATEWAY_PRIMARY_MODEL || "claude-haiku-4-5";
 const MAX_TOKENS = 200;
