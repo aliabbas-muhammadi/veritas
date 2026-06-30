@@ -1,10 +1,12 @@
 import type { Turn } from "./gateway-client";
 
 /**
- * The verdict pill for a turn — the single most important visual in the demo. It
- * makes the cache decision legible: a paraphrase HIT (free), a cold MISS, or the
- * money shot — a high-similarity candidate the guard *blocked*, which a fixed
- * threshold would have served as a wrong answer.
+ * The verdict pill for a turn — the single most important visual in the demo.
+ * Color is collapsed to ONE accent (manuscript verdigris) plus ink, so the guard
+ * "money shot" finally outranks every routine hit/miss: a kept hit is a quiet
+ * verdigris seal, a miss recedes to ink, and a guard-BLOCKED near-twin is the
+ * boldest mark on the card — accent-ringed, the cached answer struck through.
+ * Red is reserved strictly for genuine errors.
  */
 export function CacheBadge({ turn }: { turn: Turn }) {
   const sim = (s?: number) => (typeof s === "number" ? s.toFixed(2) : "—");
@@ -16,15 +18,13 @@ export function CacheBadge({ turn }: { turn: Turn }) {
     return <Pill tone="error">error</Pill>;
   }
 
-  // A guard-blocked miss — the thesis made visible.
+  // A guard-blocked miss — the thesis made visible. The boldest verdict here.
   if (turn.cache === "miss" && turn.guard) {
     const by = turn.guard.by === "judge" ? "LLM judge" : "keyless guard";
     return (
       <span className="inline-flex flex-wrap items-center gap-1.5">
-        <Pill tone="block">
-          guard blocked · sim {sim(turn.guard.similarity)}
-        </Pill>
-        <span className="font-mono text-[11px] text-amber-700 dark:text-amber-500">
+        <Pill tone="block">✕ guard blocked · cos {sim(turn.guard.similarity)}</Pill>
+        <span className="font-mono text-[11px] text-ink-faint">
           {by} · fresh answer served
         </span>
       </span>
@@ -32,18 +32,10 @@ export function CacheBadge({ turn }: { turn: Turn }) {
   }
 
   if (turn.cache === "exact") {
-    return (
-      <Pill tone="hit">
-        exact HIT · tier-1 · $0
-      </Pill>
-    );
+    return <Pill tone="hit">✓ exact hit · tier-1 · $0</Pill>;
   }
   if (turn.cache === "semantic") {
-    return (
-      <Pill tone="hit">
-        semantic HIT · sim {sim(turn.similarity)} · $0
-      </Pill>
-    );
+    return <Pill tone="hit">✓ semantic hit · cos {sim(turn.similarity)} · $0</Pill>;
   }
 
   // A plain miss (streamed from a provider).
@@ -51,9 +43,7 @@ export function CacheBadge({ turn }: { turn: Turn }) {
     return (
       <span className="inline-flex flex-wrap items-center gap-1.5">
         <Pill tone="miss">miss · streamed</Pill>
-        {turn.rescued && (
-          <Pill tone="rescue">failover → {turn.provider} · rescued</Pill>
-        )}
+        {turn.rescued && <Pill tone="rescue">failover → {turn.provider} · rescued</Pill>}
       </span>
     );
   }
@@ -63,12 +53,17 @@ export function CacheBadge({ turn }: { turn: Turn }) {
 type Tone = "hit" | "miss" | "block" | "rescue" | "error" | "muted";
 
 const TONES: Record<Tone, string> = {
-  hit: "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300",
-  miss: "border-zinc-300 bg-zinc-50 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400",
-  block: "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-300",
-  rescue: "border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-800/60 dark:bg-sky-950/40 dark:text-sky-300",
-  error: "border-red-300 bg-red-50 text-red-700 dark:border-red-800/60 dark:bg-red-950/40 dark:text-red-300",
-  muted: "border-zinc-200 bg-transparent text-zinc-400 dark:border-zinc-800 dark:text-zinc-500",
+  // A quiet verdigris seal.
+  hit: "border-accent/40 bg-accent-soft text-accent-strong",
+  // Recedes — a miss is unremarkable.
+  miss: "border-line bg-paper text-ink-faint",
+  // The money shot: accent-ringed on paper, the boldest mark.
+  block: "border-accent bg-paper text-ink ring-1 ring-accent/30",
+  // Resilience: an accent outline, distinct from the filled hit.
+  rescue: "border-accent/40 bg-paper text-accent-strong",
+  // The only non-teal — reserved for genuine errors.
+  error: "border-red-400/40 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-300",
+  muted: "border-line bg-transparent text-ink-faint",
 };
 
 function Pill({ tone, children }: { tone: Tone; children: React.ReactNode }) {

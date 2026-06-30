@@ -1,26 +1,301 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Drive the `dark:` variant from a .dark class on <html> (manual toggle). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Engineered-editorial design system (shared with alimuhammadi.com).
+  Warm paper + ink, one teal accent, serif display + sans body + mono labels.
+  Light by default, with a warm dark theme via the .dark class.
+*/
+
+@theme {
+  /* Surfaces */
+  --color-paper: #faf8f2;
+  --color-paper-raised: #fdfcf8;
+  --color-paper-sunken: #f3efe5;
+
+  /* Ink */
+  --color-ink: #1b1a17;
+  --color-ink-muted: #58544c;
+  --color-ink-faint: #8d887c;
+
+  /* Lines */
+  --color-line: #e7e1d4;
+  --color-line-strong: #d8d1c0;
+
+  /* Single accent — deep teal (manuscript verdigris) */
+  --color-accent: #11695f;
+  --color-accent-strong: #0b4f47;
+  --color-accent-soft: #e2efec;
+
+  /* Text/icons that sit ON the accent color (stays readable in both themes) */
+  --color-on-accent: #faf8f2;
+
+  /* Type scale tuned for an editorial display */
+  --text-display: clamp(2.6rem, 1.4rem + 4.6vw, 5.25rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.02em;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Warm dark theme — flips the semantic tokens; everything else inherits. */
+:root {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
+  --color-paper: #14130f;
+  --color-paper-raised: #1c1a15;
+  --color-paper-sunken: #100f0b;
+  --color-ink: #ece7da;
+  --color-ink-muted: #b1ab9d;
+  --color-ink-faint: #827c6f;
+  --color-line: #2b281f;
+  --color-line-strong: #3a362b;
+  --color-accent: #4bae9e;
+  --color-accent-strong: #6fc6b8;
+  --color-accent-soft: #173029;
+  --color-on-accent: #0c1a17;
+}
+
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --header-height: 4rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--header-height) + 0.5rem);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    font-weight: 460;
+    letter-spacing: -0.012em;
+  }
+
+  /* Tabular mono for labels and metrics */
+  .font-mono {
+    font-feature-settings: "tnum";
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Faint blueprint grid — the "engineered" texture, kept very subtle */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-line) 60%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-line) 60%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: center top;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%);
+  }
+
+  .dotgrid {
+    background-image: radial-gradient(color-mix(in oklab, var(--color-line-strong) 70%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /*
+    Ambient atmosphere — a static "paper" base (grain + depth vignette) plus two
+    whisper-slow, brand-true motions (the blueprint drift; the verdigris bloom).
+    Static-first: only the two drifts move, and both freeze under reduced-motion.
+  */
+  .grain-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+    mix-blend-mode: multiply;
+    opacity: 0.035;
+  }
+  .dark .grain-layer {
+    mix-blend-mode: soft-light;
+    opacity: 0.06;
+  }
+
+  .depth-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(140% 120% at 50% 120%, color-mix(in oklab, var(--color-ink) 1%, transparent), transparent 60%),
+      radial-gradient(closest-side at 0% 0%, color-mix(in oklab, var(--color-ink) 3%, transparent), transparent),
+      radial-gradient(closest-side at 100% 0%, color-mix(in oklab, var(--color-ink) 3%, transparent), transparent),
+      radial-gradient(closest-side at 0% 100%, color-mix(in oklab, var(--color-ink) 4%, transparent), transparent),
+      radial-gradient(closest-side at 100% 100%, color-mix(in oklab, var(--color-ink) 4%, transparent), transparent);
+  }
+
+  .lift-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(130% 95% at 50% -4%, color-mix(in oklab, #fdf6e8 68%, transparent), transparent 68%);
+  }
+  .dark .lift-layer {
+    background: radial-gradient(120% 82% at 50% -6%, color-mix(in oklab, var(--color-accent) 32%, transparent), transparent 58%);
+    mix-blend-mode: screen;
+    opacity: 0.4;
+  }
+
+  .blueprint--alive {
+    animation: blueprint-drift 120s linear infinite;
+  }
+
+  .verdigris--dot {
+    position: relative;
+    isolation: isolate;
+  }
+  .verdigris--dot::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -0.55em;
+    background: radial-gradient(closest-side at 50% 50%,
+      color-mix(in oklab, var(--color-accent) 34%, transparent),
+      color-mix(in oklab, var(--color-accent) 13%, transparent) 52%,
+      transparent 74%);
+    -webkit-mask-image: radial-gradient(closest-side, #000 32%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 32%, transparent 100%);
+    filter: blur(0.4px);
+    opacity: 0.38;
+  }
+  .dark .verdigris--dot::before {
+    opacity: 0.4;
+  }
+
+  /* Static 1px lit top edge on cards; pairs with a hover lift so depth reads as
+     lighting, not raw drop-shadow. Free, no JS, no cursor track. */
+  .sheen-top::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(to bottom, color-mix(in oklab, var(--color-paper-raised) 65%, white), transparent 1.5px);
+  }
+
+  /* Mono eyebrow used above section headings */
+  .eyebrow {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .rule {
+    height: 1px;
+    background: linear-gradient(to right, var(--color-line-strong), transparent);
+  }
+
+  /* Shared timing for small ">" affordance arrows. */
+  .arrow-nudge {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .group:hover .arrow-nudge,
+  .group:focus-visible .arrow-nudge,
+  .group:active .arrow-nudge {
+    transform: translateX(0.125rem);
+  }
+
+  /* Long-form typography */
+  .prose {
+    color: var(--color-ink-muted);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    max-width: 68ch;
+  }
+  .prose > * + * { margin-top: 1.15em; }
+  .prose strong { color: var(--color-ink); font-weight: 600; }
+  .prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in oklab, var(--color-accent) 45%, transparent);
+    transition: text-decoration-color 200ms;
+  }
+  .prose a:hover { text-decoration-color: var(--color-accent); }
+}
+
+@keyframes blueprint-drift {
+  from { background-position: 0 0; }
+  to { background-position: 64px 64px; }
+}
+
+/*
+  Ambient motion is for fine-pointer desktops only — phones and low-power devices
+  keep the full static identity with nothing moving (no continuous repaint).
+*/
+@media (max-width: 640px), (hover: none), (pointer: coarse) {
+  .blueprint--alive { animation: none; }
+  .verdigris--dot::before { animation: none; }
+}
+
+/* Soften the grain on high-DPI phone screens to avoid moiré sparkle. */
+@media (max-width: 640px) {
+  .grain-layer { opacity: 0.025; background-size: 160px 160px; }
+  .dark .grain-layer { opacity: 0.05; }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .blueprint--alive { animation: none !important; }
+  .verdigris--dot::before { animation: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Clean printing — drops site chrome */
+@media print {
+  .blueprint,
+  .dotgrid,
+  .grain-layer,
+  .depth-layer,
+  .lift-layer,
+  .verdigris--dot::before {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }

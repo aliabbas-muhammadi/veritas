@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Playground } from "@/components/Playground";
 
 export const metadata: Metadata = {
@@ -10,17 +9,17 @@ export const metadata: Metadata = {
 
 export default function PlaygroundPage() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 py-12">
-      <Link
-        href="/"
-        className="font-mono text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-      >
-        ← Veritas
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+    <div className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+      <p className="eyebrow flex items-center gap-2">
+        <span className="verdigris--dot inline-block h-1.5 w-1.5">
+          <span className="block h-full w-full rounded-full bg-accent" />
+        </span>
+        Live playground
+      </p>
+      <h1 className="mt-4 max-w-2xl font-serif text-3xl text-ink sm:text-4xl">
         The cache, proving itself.
       </h1>
-      <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <p className="mt-4 max-w-2xl leading-relaxed text-ink-muted">
         This is the real gateway, not a mockup. A paraphrase reuses a cached answer at $0; a
         near-identical question with the <em>opposite</em> answer embeds just as close, but the
         intent guard turns it into a correct miss instead of a confident wrong answer — the
@@ -28,17 +27,17 @@ export default function PlaygroundPage() {
         pre-first-token failover. Every number below is measured, live.
       </p>
 
-      <div className="mt-8">
+      <div className="mt-9">
         <Playground />
       </div>
 
-      <p className="mt-10 text-[11px] leading-relaxed text-zinc-400">
+      <p className="mt-10 border-t border-line pt-6 text-[11px] leading-relaxed text-ink-faint">
         Public demo over cheap models (Claude Haiku + gpt-4o-mini), IP rate-limited. The cache,
         metrics, and rate limiter are per-instance and in-memory, so figures reflect this
         server&rsquo;s recent traffic. A mid-stream provider failure (after the first token) is
         surfaced as a partial answer plus an error, never a faked seamless retry — once headers
         commit, clean failover is impossible, and the demo doesn&rsquo;t pretend otherwise.
       </p>
-    </main>
+    </div>
   );
 }
