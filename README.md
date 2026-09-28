@@ -31,7 +31,7 @@ The two-tier guard fixes it, and the lift is measured:
 | **+ Haiku intent judge (shipped)** | **1.00** | 0.39 | **0%** |
 
 And the guard **dominates the whole curve** — precision 1.00 / FP 0% at *every*
-threshold — so you can lower τ to **0.72 for recall 0.97 at FP 0%**, where the raw
+threshold — so with the judge you can lower τ to **0.72 for recall 0.97 at FP 0%**, where the raw
 cache's FP rate is ~75%. (The raw cache only reaches FP 0% at τ=0.96, where recall
 collapses to 0.32.) The deterministic tier catches lexical flips for free
 (good/bad, legal/illegal, today/tomorrow, 2023/2024); the answer-grounded Haiku
@@ -57,8 +57,8 @@ can embed *close* yet need *opposite* answers — the classic being negation
 confident, wrong, cached answer. The only honest way to ship one is to **measure
 how often it does that** and refuse to ship if it's too often.
 
-- **Two-tier cache.** Tier-1 exact match on a *scoped* hash (system + query +
-  model + sampling params) — 100% precise, free. Tier-2 embedding cosine for
+- **Two-tier cache.** Tier-1 exact match on a *scoped* hash (system + conversation
+  history + query + model + sampling params) — 100% precise, free. Tier-2 embedding cosine for
   paraphrases — where false positives live.
 - **An adversarial eval.** A labeled golden set of pairs: paraphrases that
   *should* hit, and negation / different-answer / scope-flip pairs that *must
@@ -97,7 +97,7 @@ npm run eval        # keyless: scores cache-hit precision / recall / FP rate,
 | cache-hit precision | of hits served, how many were correct | +semantic 0.48 → **+guard 1.00** (τ=0.92) |
 | **false-positive rate** | how often a wrong cached answer is served | +semantic 30% → **+guard 0%** (τ=0.92) |
 | rerank-guard lift | precision before → after the guard | 0.48 → 0.80 (det) → **1.00** (judge) |
-| recall at FP 0% (τ=0.72) | the shipped operating point — precision 1.00 | **0.97** (judge) vs **0.32** (any judge-free cut), 3.0× |
+| recall at FP 0% (τ=0.72) | evaluated with the judge enabled — precision 1.00 | **0.97** (judge) vs **0.32** (any judge-free cut), 3.0× |
 | p50/p95 latency · TTFT | from `npm run bench` (26-req stream) | TTFT p50 ~0.9s / p95 ~1.8s · cache replay ~0 ms |
 | cost saved | cache hit = $0; from `npm run bench` | 38% hit-rate → **42% of provider spend avoided** |
 | failover rescued rate | outages caught before the first token | live: provider outage → served by fallback |
@@ -157,6 +157,10 @@ npm run dev              # POST /api/chat — streams NDJSON (mock provider if n
                          # visit /playground for the guided live tour (set
                          # SEMANTIC_CACHE=on GUARD_JUDGE=on for the cache + guard)
 ```
+
+The live semantic cache is off by default and its default threshold is 0.92.
+The 0.72 result above is from the eval; use that threshold only with the judge
+enabled and an Anthropic key available.
 
 With no API keys the gateway serves a deterministic mock answer and the eval runs
 off committed embeddings — so `build`, `lint`, and `eval` are all green keyless,

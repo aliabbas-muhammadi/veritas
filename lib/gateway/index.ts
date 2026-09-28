@@ -6,11 +6,8 @@
  *                                                 on MISS pick provider, stream,
  *                                                 then cache the exchange.
  *
- * What's here at scaffold: the lifecycle, Tier-1 exact caching, optional Tier-2
- * semantic (off by default until the P2 guard), and the mock/live provider
- * stream. Routing (P4), the rerank guard (P2), observability + real $ cost (P3),
- * and pre-first-token failover (P4) slot into the marked points without
- * reshaping this flow.
+ * The lifecycle includes scoped caching, an optional guarded semantic tier,
+ * routing, observability, and pre-first-token failover.
  */
 import { scopeKey, lastUserQuery } from "./scopeKey";
 import { routeModel } from "./router";
@@ -39,8 +36,7 @@ export async function* runGateway(
 
   const key = scopeKey(req);
 
-  // Tier-2 ships OFF until the P2 rerank guard can vouch for intent — a fast,
-  // wrong cached answer is worse than a slow, right one.
+  // Tier-2 remains off by default. Enable the judge for the measured full guard.
   const semantic = process.env.SEMANTIC_CACHE === "on" && req.cache?.mode !== "off";
   const threshold = req.cache?.threshold ?? DEFAULT_THRESHOLD;
   const judgeOn = process.env.GUARD_JUDGE === "on" && judgeAvailable();

@@ -41,7 +41,7 @@ export type CacheHit = {
   tier: CacheTier;
   /** 1 for an exact hit; cosine similarity for a semantic hit. */
   similarity: number;
-  /** The guard's confidence that intent matched (set once the P2 guard lands). */
+  /** Reserved for a guard confidence score. */
   guardScore?: number;
 };
 
