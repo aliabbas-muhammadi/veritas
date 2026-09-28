@@ -1,7 +1,7 @@
 /**
  * The scope key — computed BEFORE any cache lookup, because it gates every cache
  * decision. Two requests share a cached answer only if their whole scope matches
- * (system prompt, model, sampling params), not just the query text. This is
+ * (system prompt, conversation history, model, sampling params), not just the query text. This is
  * itself a correctness guard: "scope isolation" is a measured ablation arm in the
  * eval, because a query-only key admits cross-scope false positives.
  */
@@ -26,15 +26,19 @@ export function lastUserQuery(messages: Message[]): string {
 export function scopeKey(req: ChatRequest): CacheKey {
   const system = canonical(req.system ?? "");
   const query = canonical(lastUserQuery(req.messages));
+  const lastUserIndex = req.messages.findLastIndex((m) => m.role === "user");
+  const history = JSON.stringify(
+    req.messages.map((m, i) => [m.role, i === lastUserIndex ? null : canonical(m.content)]),
+  );
   const model = req.model;
   // Bucket temperature to 0.1 — exact floats are sampling noise, not intent.
   const tempBin = Math.round((req.temperature ?? 0) * 10) / 10;
   const topP = req.topP ?? 1;
   const maxTokens = req.maxTokens;
   const hash = createHash("sha256")
-    .update(JSON.stringify([system, query, model, tempBin, topP, maxTokens]))
+    .update(JSON.stringify([system, history, query, model, tempBin, topP, maxTokens]))
     .digest("hex");
-  return { system, query, model, tempBin, topP, maxTokens, hash };
+  return { system, history, query, model, tempBin, topP, maxTokens, hash };
 }
 
 /** True when two keys share everything EXCEPT the query — the scope-isolation
@@ -42,6 +46,7 @@ export function scopeKey(req: ChatRequest): CacheKey {
 export function sameScope(a: CacheKey, b: CacheKey): boolean {
   return (
     a.system === b.system &&
+    a.history === b.history &&
     a.model === b.model &&
     a.tempBin === b.tempBin &&
     a.topP === b.topP &&

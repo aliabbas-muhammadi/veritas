@@ -4,13 +4,14 @@ import type { ChatRequest, ProviderEvent, ProviderName, Usage } from "./provider
 
 /**
  * The SCOPED cache key. A paraphrase asked under a different system prompt,
- * model, or sampling params is a *different request* and must not share a cached
+ * conversation history, model, or sampling params is a *different request* and must not share a cached
  * answer — so the key folds all of them in, not just the query text. `hash` is
  * the Tier-1 exact-match key; the structured fields drive scope isolation in the
  * semantic tier.
  */
 export type CacheKey = {
   system: string;
+  history: string;
   query: string;
   model: string;
   tempBin: number;
