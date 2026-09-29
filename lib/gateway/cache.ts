@@ -10,8 +10,7 @@
  * The danger Tier 2 introduces is serving a *semantically-wrong* cached answer
  * (two questions that embed close but need different answers — the classic being
  * negation: "is X safe?" vs "is X NOT safe?"). The eval harness measures exactly
- * that as a false-positive rate. Until the P2 rerank guard lands to confirm
- * intent, the SHIPPED pipeline keeps Tier 2 OFF by default (SEMANTIC_CACHE=off):
+ * that as a false-positive rate. Tier 2 stays OFF by default (SEMANTIC_CACHE=off):
  * a fast, wrong answer is worse than a slow, right one.
  *
  * Per-instance, 24h TTL, LRU-capped — like the flagship's demo cache. Production
@@ -37,7 +36,7 @@ export type LookupOptions = {
   embedding: number[] | null;
   /** Operating cosine threshold τ for a Tier-2 hit. */
   threshold: number;
-  /** Whether Tier-2 (semantic) is enabled at all. Off by default until the guard. */
+  /** Whether Tier-2 (semantic) is enabled at all. Off by default. */
   semantic: boolean;
   /**
    * Intent guard run on the top semantic candidate (P2). Returns the kept hit, or

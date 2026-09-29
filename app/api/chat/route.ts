@@ -64,19 +64,41 @@ function parseBody(body: unknown): GatewayRequest | { error: string } {
   }
 
   const model = typeof b.model === "string" && b.model ? b.model : DEFAULT_MODEL;
-  const maxTokens = typeof b.maxTokens === "number" ? b.maxTokens : DEFAULT_MAX_TOKENS;
-  const temperature = typeof b.temperature === "number" ? b.temperature : 0;
+  const maxTokens = b.maxTokens === undefined ? DEFAULT_MAX_TOKENS : b.maxTokens;
+  if (typeof maxTokens !== "number" || !Number.isSafeInteger(maxTokens) || maxTokens < 1) {
+    return { error: "maxTokens must be a positive integer" };
+  }
+  const temperature = b.temperature === undefined ? 0 : b.temperature;
+  if (typeof temperature !== "number" || !Number.isFinite(temperature) || temperature < 0) {
+    return { error: "temperature must be a finite non-negative number" };
+  }
+  const topP = b.topP;
+  if (topP !== undefined && (typeof topP !== "number" || !Number.isFinite(topP) || topP <= 0 || topP > 1)) {
+    return { error: "topP must be a number greater than 0 and at most 1" };
+  }
   const system = typeof b.system === "string" ? b.system : undefined;
   const forceOutage =
     b.forceOutage === "anthropic" || b.forceOutage === "openai" || b.forceOutage === "mock"
       ? (b.forceOutage as ProviderName)
       : null;
-  const cache =
-    typeof b.cache === "object" && b.cache !== null
-      ? (b.cache as GatewayRequest["cache"])
-      : undefined;
+  let cache: GatewayRequest["cache"];
+  if (b.cache !== undefined) {
+    if (typeof b.cache !== "object" || b.cache === null || Array.isArray(b.cache)) {
+      return { error: "cache must be an object" };
+    }
+    const rawCache = b.cache as Record<string, unknown>;
+    if (rawCache.mode !== "auto" && rawCache.mode !== "off") {
+      return { error: "cache.mode must be auto or off" };
+    }
+    const threshold = rawCache.threshold;
+    if (threshold !== undefined &&
+        (typeof threshold !== "number" || !Number.isFinite(threshold) || threshold < 0 || threshold > 1)) {
+      return { error: "cache.threshold must be a number between 0 and 1" };
+    }
+    cache = { mode: rawCache.mode, ...(threshold === undefined ? {} : { threshold }) };
+  }
 
-  return { system, messages, model, temperature, maxTokens, forceOutage, cache };
+  return { system, messages, model, temperature, topP, maxTokens, forceOutage, cache };
 }
 
 /**

@@ -154,7 +154,7 @@ export async function llmJudgeGuard(a: string, b: string): Promise<boolean> {
     }
     const data = (await res.json()) as { content?: { type: string; text?: string }[] };
     const text = (data.content ?? []).map((c) => c.text ?? "").join("").trim().toUpperCase();
-    return !text.startsWith("NO");
+    return text === "YES";
   } catch (err) {
     console.error("judge failed:", err);
     return false; // a fast wrong answer is worse than a miss ⇒ fail CLOSED
